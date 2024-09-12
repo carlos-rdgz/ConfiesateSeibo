@@ -1,173 +1,102 @@
-/* General */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #111;
-    color: #fff;
-    margin: 0;
-    padding: 0;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-  /* Estilo para el tema claro */
-  body.light-mode {
-    background-color: #f4f4f4;
-    color: #333;
-  }
-  
-  /* Contenedor principal */
-  .container {
-    max-width: 800px;
-    margin: 50px auto;
-    padding: 20px;
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Estilos para los títulos */
-  h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    color: #00c6ff;
-  }
-  
-  /* Botones */
-  button {
-    padding: 12px 25px;
-    background: linear-gradient(135deg, #00c6ff, #0072ff);
-    color: #fff;
-    border: none;
-    border-radius: 25px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin-top: 20px;
-  }
-  
-  button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 5px 15px rgba(0, 198, 255, 0.5);
-  }
-  
-  /* Estilos para el formulario */
-  textarea {
-    width: 100%;
-    height: 150px;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
-  }
-  
-  textarea:focus {
-    border-color: #00c6ff;
-  }
-  
-  /* Estilos para las respuestas */
-  #response-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
-  
-  .response {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
-    max-height: 150px;
-    overflow: hidden;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    word-wrap: break-word;
-  }
-  
-  /* Etiqueta Anónimo */
-  .response::before {
-    content: "Anónimo";
-    font-weight: bold;
-    color: #00c6ff;
-    margin-bottom: 10px;
-    display: block;
-  }
-  
-  /* Estilo para texto largo en la respuesta */
-  .response.long {
-    overflow: hidden;
-  }
-  
-  /* Animación de expansión */
-  @keyframes expandAnimation {
-    from {
-      max-height: 150px;
-      opacity: 0;
-    }
-    to {
-      max-height: 400px;
-      opacity: 1;
-    }
-  }
-  
-  .response.expanded {
-    position: fixed;
-    top: 20%;
-    left: 50%;
-    transform: translate(-50%, -20%);
-    max-width: 90%;
-    width: 600px;
-    max-height: 80vh;
-    overflow: auto;
-    background: rgba(255, 255, 255, 0.9);
-    color: #333;
-    z-index: 1000;
-    border-radius: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-    animation: expandAnimation 0.5s ease;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .response.expanded p {
-    margin: 20px;
-    line-height: 1.5;
-  }
-  
-  /* Fondo oscuro para la ventana emergente */
-  .response.expanded::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: -1;
-  }
-  
-  /* Botón de cerrar */
-  .close-btn {
-    background: #ff5c5c;
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    font-size: 18px;
-    line-height: 30px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .close-btn:hover {
-    background: #ff3b3b;
-  }
-  
+  font-family: 'Arial', sans-serif;
+  background-color: #1c1c1e;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: #eaeaea;
+}
+
+p {
+  font-size: 1.2rem;
+  color: #b3b3b3;
+}
+
+.container {
+  width: 90%;
+  max-width: 600px;
+  margin-bottom: 30px;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #444;
+  background-color: #2c2c2e;
+  color: #fff;
+  resize: none;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  background-color: #34c759;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #30a14e;
+}
+
+.boton-ver-confesiones, .boton-volver-confesar {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007aff;
+  color: #fff;
+  border-radius: 5px;
+  text-decoration: none;
+  margin-top: 20px;
+}
+
+.boton-ver-confesiones:hover, .boton-volver-confesar:hover {
+  background-color: #005ecb;
+}
+
+#confesiones-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.confesion {
+  width: 45%;
+  background-color: #333;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.confesion:hover {
+  transform: scale(1.05);
+}
+
+.animaciones-3d {
+  margin-top: 30px;
+  /* Aquí podrías añadir tus figuras 3D */
+}
+
+.ver-confesiones {
+  margin-top: 20px;
+}
