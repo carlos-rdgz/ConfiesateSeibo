@@ -20,8 +20,69 @@
     <button id="view-responses">Ver todas las respuestas</button>
 
     <button id="toggle-theme">Cambiar tema</button>
+
+    <!-- Contenedor para mostrar las confesiones -->
+    <div id="confessions-container"></div>
   </div>
 
-  <script src="app.js"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.x/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.x/firebase-firestore.js"></script>
+
+  <script>
+    // Configuración de Firebase (esto lo obtienes de la consola de Firebase)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBKzFdJzLD0qnPc0KlJlZ3L1kH5hyo5ZJE",
+      authDomain: "confiesate-seibo.firebaseapp.com",
+      projectId: "confiesate-seibo",
+      storageBucket: "confiesate-seibo.appspot.com",
+      messagingSenderId: "385713181061",
+      appId: "1:385713181061:web:be453f8eb6cb791ee2f4ec",
+      measurementId: "G-8T65EVV052"
+    };
+
+    // Inicializar Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Referencias a los elementos del DOM
+    const confessionForm = document.getElementById('confession-form');
+    const confessionTextarea = document.getElementById('confession');
+    const confessionsContainer = document.getElementById('confessions-container');
+
+    // Guardar confesión en Firebase
+    confessionForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const message = confessionTextarea.value.trim();
+
+      if (message) {
+        await db.collection('confessions').add({
+          message: message,
+          date: new Date()
+        });
+
+        alert('Confesión enviada');
+        confessionTextarea.value = '';  // Limpiar el formulario
+        loadConfessions();  // Cargar confesiones después de enviar
+      }
+    });
+
+    // Cargar y mostrar confesiones
+    async function loadConfessions() {
+      const snapshot = await db.collection('confessions').orderBy('date', 'desc').get();
+      confessionsContainer.innerHTML = '';  // Limpiar el contenedor antes de agregar las confesiones
+
+      snapshot.forEach(doc => {
+        const confessionData = doc.data();
+        const confessionElement = document.createElement('div');
+        confessionElement.className = 'confession-box';
+        confessionElement.innerText = confessionData.message;
+        confessionsContainer.appendChild(confessionElement);
+      });
+    }
+
+    // Cargar confesiones al inicio
+    loadConfessions();
+  </script>
 </body>
 </html>
