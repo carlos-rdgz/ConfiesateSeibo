@@ -1,23 +1,3 @@
-// --- CONFIGURACIÓN DE FIREBASE ---
-// Importar Firebase (asegúrate de tener los SDK correctos en tu HTML)
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, getDocs, orderBy, query } from "firebase/firestore";
-
-// Configuración de Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyBKzFdJzLD0qnPc0KlJlZ3L1kH5hyo5ZJE",
-  authDomain: "confiesate-seibo.firebaseapp.com",
-  projectId: "confiesate-seibo",
-  storageBucket: "confiesate-seibo.appspot.com",
-  messagingSenderId: "385713181061",
-  appId: "1:385713181061:web:be453f8eb6cb791ee2f4ec",
-  measurementId: "G-8T65EVV052"
-};
-
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
 // --- CAMBIO DE TEMA ---
 const toggleThemeBtn = document.getElementById('toggle-theme');
 const currentTheme = localStorage.getItem('theme');
@@ -60,7 +40,7 @@ if (lastConfessionTime) {
 
 // Evento para enviar la confesión
 if (form) {
-  form.addEventListener('submit', async (event) => {
+  form.addEventListener('submit', (event) => {
     event.preventDefault();
     if (canConfess && confessionText.value.trim()) {
       canConfess = false;
@@ -68,19 +48,14 @@ if (form) {
       // Guardar la fecha de la confesión
       localStorage.setItem('lastConfessionTime', new Date());
 
-      // Guardar la confesión en Firestore
-      try {
-        await addDoc(collection(db, 'confessions'), {
-          text: confessionText.value,
-          date: new Date()
-        });
+      // Guardar la confesión en localStorage
+      let confessions = JSON.parse(localStorage.getItem('confessions')) || [];
+      confessions.push({ text: confessionText.value, date: new Date() });
+      localStorage.setItem('confessions', JSON.stringify(confessions));
 
-        alert('Confesión enviada');
-        confessionText.value = '';
-        countdown(60); // Iniciar temporizador de 60 segundos
-      } catch (error) {
-        console.error('Error añadiendo documento: ', error);
-      }
+      // Limpiar el campo de texto
+      confessionText.value = '';
+      countdown(60); // Iniciar temporizador de 60 segundos
     }
   });
 }
@@ -101,32 +76,26 @@ function countdown(time) {
 // --- CARGAR RESPUESTAS EN LA SEGUNDA PÁGINA ---
 const responseContainer = document.getElementById('response-container');
 if (responseContainer) {
-  const fetchConfessions = async () => {
-    const q = query(collection(db, 'confessions'), orderBy('date', 'desc'));
-    const querySnapshot = await getDocs(q);
-    responseContainer.innerHTML = '';  // Limpiar el contenedor antes de agregar las confesiones
+  const confessions = JSON.parse(localStorage.getItem('confessions')) || [];
 
-    querySnapshot.forEach(doc => {
-      const confessionData = doc.data();
-      const responseDiv = document.createElement('div');
-      responseDiv.classList.add('response');
+  // Generar los cuadros de confesiones
+  confessions.forEach(confession => {
+    const responseDiv = document.createElement('div');
+    responseDiv.classList.add('response');
 
-      // Si la confesión es muy larga, añadir la clase long
-      if (confessionData.text.length > 100) {
-        responseDiv.classList.add('long');
-        responseDiv.addEventListener('click', () => {
-          responseDiv.classList.toggle('expanded');
-          responseDiv.style.animation = 'expandAnimation 0.5s ease';
-        });
-      }
+    // Si la confesión es muy larga, añadir la clase long
+    if (confession.text.length > 100) {
+      responseDiv.classList.add('long');
+      responseDiv.addEventListener('click', () => {
+        responseDiv.classList.toggle('expanded');
+        responseDiv.style.animation = 'expandAnimation 0.5s ease';
+      });
+    }
 
-      // Añadir el texto de la confesión
-      responseDiv.textContent = confessionData.text;
-      responseContainer.appendChild(responseDiv);
-    });
-  };
-
-  fetchConfessions();
+    // Añadir el texto de la confesión
+    responseDiv.textContent = confession.text;
+    responseContainer.appendChild(responseDiv);
+  });
 }
 
 // --- BOTÓN VOLVER A CONFESAR ---
