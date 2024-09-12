@@ -1,0 +1,20 @@
+{
+  "name": "mi-1ra-pagina",
+  "version": "1.0.0",
+  "description": "Esta es mi primera pagina web que se trata de moda, mockups, edicion de videos,etc...",
+  "main": "indes.html",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js" // Solo si usas nodemon para desarrollo
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemailer": "^6.6.3"
+    // Agrega otras dependencias necesarias para tu proyecto
+  },
+  "engines": {
+    "node": ">=14.0.0" // Ajusta según la versión de Node.js que estés usando
+  },
+  "author": "Tu Nombre",
+  "license": "ISC"
+}
