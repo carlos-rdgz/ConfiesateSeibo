@@ -26,10 +26,14 @@
   </div>
 
   <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.x/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.x/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.20.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.20.0/firebase-firestore.js"></script>
 
   <script>
+    // Importar Firebase y Firestore
+    import { initializeApp } from "firebase/app";
+    import { getFirestore, collection, addDoc, getDocs, orderBy, query } from "firebase/firestore";
+
     // Configuración de Firebase (esto lo obtienes de la consola de Firebase)
     const firebaseConfig = {
       apiKey: "AIzaSyBKzFdJzLD0qnPc0KlJlZ3L1kH5hyo5ZJE",
@@ -42,8 +46,8 @@
     };
 
     // Inicializar Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
     // Referencias a los elementos del DOM
     const confessionForm = document.getElementById('confession-form');
@@ -56,23 +60,27 @@
       const message = confessionTextarea.value.trim();
 
       if (message) {
-        await db.collection('confessions').add({
-          message: message,
-          date: new Date()
-        });
-
-        alert('Confesión enviada');
-        confessionTextarea.value = '';  // Limpiar el formulario
-        loadConfessions();  // Cargar confesiones después de enviar
+        try {
+          await addDoc(collection(db, 'confessions'), {
+            message: message,
+            date: new Date()
+          });
+          alert('Confesión enviada');
+          confessionTextarea.value = '';  // Limpiar el formulario
+          loadConfessions();  // Cargar confesiones después de enviar
+        } catch (error) {
+          console.error('Error al enviar la confesión: ', error);
+        }
       }
     });
 
     // Cargar y mostrar confesiones
     async function loadConfessions() {
-      const snapshot = await db.collection('confessions').orderBy('date', 'desc').get();
+      const q = query(collection(db, 'confessions'), orderBy('date', 'desc'));
+      const querySnapshot = await getDocs(q);
       confessionsContainer.innerHTML = '';  // Limpiar el contenedor antes de agregar las confesiones
 
-      snapshot.forEach(doc => {
+      querySnapshot.forEach(doc => {
         const confessionData = doc.data();
         const confessionElement = document.createElement('div');
         confessionElement.className = 'confession-box';
