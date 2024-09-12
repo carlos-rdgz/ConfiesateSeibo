@@ -20,77 +20,8 @@
     <button id="view-responses">Ver todas las respuestas</button>
 
     <button id="toggle-theme">Cambiar tema</button>
-
-    <!-- Contenedor para mostrar las confesiones -->
-    <div id="confessions-container"></div>
   </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.20.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.20.0/firebase-firestore.js"></script>
-
-  <script>
-    // Importar Firebase y Firestore
-    import { initializeApp } from "firebase/app";
-    import { getFirestore, collection, addDoc, getDocs, orderBy, query } from "firebase/firestore";
-
-    // Configuración de Firebase (esto lo obtienes de la consola de Firebase)
-    const firebaseConfig = {
-      apiKey: "AIzaSyBKzFdJzLD0qnPc0KlJlZ3L1kH5hyo5ZJE",
-      authDomain: "confiesate-seibo.firebaseapp.com",
-      projectId: "confiesate-seibo",
-      storageBucket: "confiesate-seibo.appspot.com",
-      messagingSenderId: "385713181061",
-      appId: "1:385713181061:web:be453f8eb6cb791ee2f4ec",
-      measurementId: "G-8T65EVV052"
-    };
-
-    // Inicializar Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // Referencias a los elementos del DOM
-    const confessionForm = document.getElementById('confession-form');
-    const confessionTextarea = document.getElementById('confession');
-    const confessionsContainer = document.getElementById('confessions-container');
-
-    // Guardar confesión en Firebase
-    confessionForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const message = confessionTextarea.value.trim();
-
-      if (message) {
-        try {
-          await addDoc(collection(db, 'confessions'), {
-            message: message,
-            date: new Date()
-          });
-          alert('Confesión enviada');
-          confessionTextarea.value = '';  // Limpiar el formulario
-          loadConfessions();  // Cargar confesiones después de enviar
-        } catch (error) {
-          console.error('Error al enviar la confesión: ', error);
-        }
-      }
-    });
-
-    // Cargar y mostrar confesiones
-    async function loadConfessions() {
-      const q = query(collection(db, 'confessions'), orderBy('date', 'desc'));
-      const querySnapshot = await getDocs(q);
-      confessionsContainer.innerHTML = '';  // Limpiar el contenedor antes de agregar las confesiones
-
-      querySnapshot.forEach(doc => {
-        const confessionData = doc.data();
-        const confessionElement = document.createElement('div');
-        confessionElement.className = 'confession-box';
-        confessionElement.innerText = confessionData.message;
-        confessionsContainer.appendChild(confessionElement);
-      });
-    }
-
-    // Cargar confesiones al inicio
-    loadConfessions();
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
