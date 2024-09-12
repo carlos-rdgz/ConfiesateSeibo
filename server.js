@@ -6,34 +6,34 @@ const path = require('path');
 const app = express();
 const port = 3000;
 
-// Configurar body-parser para manejar solicitudes POST
+// Configuración para el manejo de JSON en POST
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Configurar archivos estáticos
+// Hacer que la carpeta 'public' sea accesible
 app.use(express.static('public'));
 
-// Ruta para cargar la página principal
+// Cargar la página principal
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Leer confesiones de un archivo JSON
+// Leer confesiones desde el archivo
 const leerConfesiones = () => {
   try {
     const data = fs.readFileSync('confesiones.json', 'utf8');
     return JSON.parse(data);
   } catch (error) {
-    return [];
+    return []; // Si no hay archivo, retornar una lista vacía
   }
 };
 
-// Guardar confesiones en un archivo JSON
+// Guardar las confesiones en un archivo
 const guardarConfesiones = (confesiones) => {
   fs.writeFileSync('confesiones.json', JSON.stringify(confesiones, null, 2));
 };
 
-// Ruta para obtener todas las confesiones
+// Obtener todas las confesiones para mostrarlas en la segunda página
 app.get('/confesiones', (req, res) => {
   const confesiones = leerConfesiones();
   res.json(confesiones);
@@ -46,6 +46,7 @@ app.post('/confesar', (req, res) => {
     texto: req.body.confesion,
   };
 
+  // Leer las confesiones existentes y añadir la nueva
   const confesiones = leerConfesiones();
   confesiones.push(nuevaConfesion);
   guardarConfesiones(confesiones);
@@ -53,6 +54,7 @@ app.post('/confesar', (req, res) => {
   res.json({ message: 'Confesión enviada con éxito' });
 });
 
+// Escuchar en el puerto definido
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
 });
