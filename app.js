@@ -1,66 +1,5 @@
-// Importar los módulos de Firebase
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc, getDocs, orderBy, query } from 'firebase/firestore';
-
-// Configuración de Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyBKzFdJzLD0qnPc0KlJlZ3L1kH5hyo5ZJE",
-  authDomain: "confiesate-seibo.firebaseapp.com",
-  projectId: "confiesate-seibo",
-  storageBucket: "confiesate-seibo.appspot.com",
-  messagingSenderId: "385713181061",
-  appId: "1:385713181061:web:be453f8eb6cb791ee2f4ec",
-  measurementId: "G-8T65EVV052"
-};
-
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// Referencias a los elementos del DOM
-const confessionForm = document.getElementById('confession-form');
-const confessionTextarea = document.getElementById('confession');
-const confessionsContainer = document.getElementById('confessions-container');
-
-// Guardar confesión en Firestore
-confessionForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const message = confessionTextarea.value.trim();
-
-  if (message) {
-    try {
-      await addDoc(collection(db, 'confessions'), {
-        message: message,
-        date: new Date()
-      });
-      alert('Confesión enviada');
-      confessionTextarea.value = '';  // Limpiar el formulario
-      loadConfessions();  // Cargar confesiones después de enviar
-    } catch (e) {
-      console.error("Error añadiendo el documento: ", e);
-    }
-  }
-});
-
-// Cargar y mostrar confesiones
-async function loadConfessions() {
-  const q = query(collection(db, 'confessions'), orderBy('date', 'desc'));
-  const querySnapshot = await getDocs(q);
-  confessionsContainer.innerHTML = '';  // Limpiar el contenedor antes de agregar las confesiones
-
-  querySnapshot.forEach((doc) => {
-    const confessionData = doc.data();
-    const confessionElement = document.createElement('div');
-    confessionElement.className = 'confession-box';
-    confessionElement.innerText = confessionData.message;
-    confessionsContainer.appendChild(confessionElement);
-  });
-}
-
-// Cargar confesiones al inicio
-loadConfessions();
-
 // --- CAMBIO DE TEMA ---
+// Recuperar el tema guardado
 const toggleThemeBtn = document.getElementById('toggle-theme');
 const currentTheme = localStorage.getItem('theme');
 
@@ -83,7 +22,10 @@ if (toggleThemeBtn) {
   });
 }
 
-// --- TEMPORIZADOR ---
+// --- ENVÍO DE CONFESIONES Y TEMPORIZADOR ---
+// Variables
+const form = document.getElementById('confession-form');
+const confessionText = document.getElementById('confession');
 const countdownElement = document.getElementById('countdown');
 let canConfess = true;
 
@@ -96,6 +38,28 @@ if (lastConfessionTime) {
     canConfess = false;
     countdown(remainingTime);
   }
+}
+
+// Evento para enviar la confesión
+if (form) {
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (canConfess && confessionText.value.trim()) {
+      canConfess = false;
+
+      // Guardar la fecha de la confesión
+      localStorage.setItem('lastConfessionTime', new Date());
+
+      // Guardar la confesión en localStorage
+      let confessions = JSON.parse(localStorage.getItem('confessions')) || [];
+      confessions.push({ text: confessionText.value, date: new Date() });
+      localStorage.setItem('confessions', JSON.stringify(confessions));
+
+      // Limpiar el campo de texto
+      confessionText.value = '';
+      countdown(60); // Iniciar temporizador de 60 segundos
+    }
+  });
 }
 
 // Función del temporizador
@@ -111,16 +75,44 @@ function countdown(time) {
   }, 1000);
 }
 
-// --- NAVEGACIÓN ---
-const backToConfessionBtn = document.getElementById('back-to-confession');
-const viewResponsesBtn = document.getElementById('view-responses');
+// --- CARGAR RESPUESTAS EN LA SEGUNDA PÁGINA ---
+// Cargar confesiones desde localStorage
+const responseContainer = document.getElementById('response-container');
+if (responseContainer) {
+  const confessions = JSON.parse(localStorage.getItem('confessions')) || [];
 
+  // Generar los cuadros de confesiones
+  confessions.forEach(confession => {
+    const responseDiv = document.createElement('div');
+    responseDiv.classList.add('response');
+
+    // Si la confesión es muy larga, añadir la clase long
+    if (confession.text.length > 100) {
+      responseDiv.classList.add('long');
+      responseDiv.addEventListener('click', () => {
+        responseDiv.classList.toggle('expanded');
+        responseDiv.style.animation = 'expandAnimation 0.5s ease';
+      });
+    }
+
+    // Añadir el texto de la confesión
+    responseDiv.textContent = confession.text;
+    responseContainer.appendChild(responseDiv);
+  });
+}
+
+// --- BOTÓN VOLVER A CONFESAR ---
+// Botón para volver a la página principal
+const backToConfessionBtn = document.getElementById('back-to-confession');
 if (backToConfessionBtn) {
   backToConfessionBtn.addEventListener('click', () => {
     window.location.href = 'index.html'; // Redirigir a la página principal
   });
 }
 
+// --- NAVEGACIÓN A RESPUESTAS ---
+// Botón para ver todas las respuestas
+const viewResponsesBtn = document.getElementById('view-responses');
 if (viewResponsesBtn) {
   viewResponsesBtn.addEventListener('click', () => {
     window.location.href = 'responses.html'; // Redirigir a la página de respuestas
