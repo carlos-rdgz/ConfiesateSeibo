@@ -3,20 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Confiesate Seibo - Respuestas</title>
+  <title>Confiesate Seibo - Ver Confesiones</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
+
+  <header>
     <h1>Confesiones Anónimas</h1>
+  </header>
 
-    <div id="response-container"></div>
-
-    <button id="back-to-confession">Volver a Confesar</button>
-
-    <button id="toggle-theme">Cambiar tema</button>
+  <div id="confesiones-container">
+    <!-- Aquí se cargarán las confesiones dinámicamente -->
   </div>
 
-  <script src="app.js"></script>
+  <!-- Botón para volver a confesar -->
+  <div class="volver-confesar">
+    <a href="/" class="boton-volver-confesar">Volver a confesar</a>
+  </div>
+
+  <script src="scripts.js"></script>
 </body>
 </html>
