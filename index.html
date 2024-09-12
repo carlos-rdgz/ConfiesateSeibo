@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,14 +7,30 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Confiesate Seibo</h1>
-  <form id="confesion-form">
-    <textarea id="confesion-text" rows="5" placeholder="Escribe tu confesión..." required></textarea>
-    <button type="submit">Enviar confesión</button>
-  </form>
 
-  <h2>Confesiones Anónimas</h2>
-  <div id="confesiones-container"></div>
+  <header>
+    <h1>Confiesate Seibo</h1>
+    <p>Sin miedo, que aquí ni el creador sabe quién eres</p>
+  </header>
+
+  <!-- Formulario de confesión -->
+  <div class="container">
+    <form id="confesion-form">
+      <textarea id="confesion-text" placeholder="Escribe tu confesión anónima aquí..." rows="4" required></textarea>
+      <button type="submit">Confesar</button>
+    </form>
+    <p id="contador"></p>
+  </div>
+
+  <!-- Botón para ver todas las confesiones -->
+  <div class="ver-confesiones">
+    <a href="ver_confesiones.html" class="boton-ver-confesiones">Ver todas las confesiones</a>
+  </div>
+
+  <!-- Animaciones o figuras 3D -->
+  <div class="animaciones-3d">
+    <!-- Puedes agregar tus figuras o animaciones aquí -->
+  </div>
 
   <script src="scripts.js"></script>
 </body>
