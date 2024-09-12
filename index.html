@@ -7,31 +7,21 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-  <header>
-    <h1>Confiesate Seibo</h1>
-    <p>Sin miedo, que aquí ni el creador sabe quién eres</p>
-  </header>
-
-  <!-- Formulario de confesión -->
   <div class="container">
-    <form id="confesion-form">
-      <textarea id="confesion-text" placeholder="Escribe tu confesión anónima aquí..." rows="4" required></textarea>
+    <h1>Confiesa tu secreto</h1>
+
+    <form id="confession-form">
+      <textarea id="confession" placeholder="Escribe tu confesión..." required></textarea>
       <button type="submit">Confesar</button>
     </form>
-    <p id="contador"></p>
+
+    <p id="countdown"></p>
+
+    <button id="view-responses">Ver todas las respuestas</button>
+
+    <button id="toggle-theme">Cambiar tema</button>
   </div>
 
-  <!-- Botón para ver todas las confesiones -->
-  <div class="ver-confesiones">
-    <a href="ver_confesiones.html" class="boton-ver-confesiones">Ver todas las confesiones</a>
-  </div>
-
-  <!-- Animaciones o figuras 3D -->
-  <div class="animaciones-3d">
-    <!-- Puedes agregar tus figuras o animaciones aquí -->
-  </div>
-
-  <script src="scripts.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
