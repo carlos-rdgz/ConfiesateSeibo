@@ -1,26 +1,58 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const app = express();
+const fs = require('fs');
+const path = require('path');
 
-// Sirve los archivos estáticos como HTML, CSS, JS desde la carpeta 'public'
-app.use(express.static('public'));
+const app = express();
+const port = 3000;
+
+// Configurar body-parser para manejar solicitudes POST
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Ruta para la página principal
+// Configurar archivos estáticos
+app.use(express.static('public'));
+
+// Ruta para cargar la página principal
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Ruta para manejar el envío de confesiones
-app.post('/confesiones', (req, res) => {
-  const confesion = req.body.confesion;
-  // Aquí podrías guardar la confesión en una base de datos o en memoria
-  console.log('Confesión recibida:', confesion);
-  res.redirect('/'); // Redirige al usuario de vuelta a la página principal
+// Leer confesiones de un archivo JSON
+const leerConfesiones = () => {
+  try {
+    const data = fs.readFileSync('confesiones.json', 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    return [];
+  }
+};
+
+// Guardar confesiones en un archivo JSON
+const guardarConfesiones = (confesiones) => {
+  fs.writeFileSync('confesiones.json', JSON.stringify(confesiones, null, 2));
+};
+
+// Ruta para obtener todas las confesiones
+app.get('/confesiones', (req, res) => {
+  const confesiones = leerConfesiones();
+  res.json(confesiones);
 });
 
-// Define el puerto del servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
+// Ruta para enviar una nueva confesión
+app.post('/confesar', (req, res) => {
+  const nuevaConfesion = {
+    id: Date.now(),
+    texto: req.body.confesion,
+  };
+
+  const confesiones = leerConfesiones();
+  confesiones.push(nuevaConfesion);
+  guardarConfesiones(confesiones);
+
+  res.json({ message: 'Confesión enviada con éxito' });
+});
+
+app.listen(port, () => {
+  console.log(`Servidor corriendo en http://localhost:${port}`);
 });
