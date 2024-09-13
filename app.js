@@ -42,7 +42,7 @@ if (lastConfessionTime) {
 
 // Evento para enviar la confesión
 if (form) {
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
     if (canConfess && confessionText.value.trim()) {
       canConfess = false;
@@ -50,10 +50,26 @@ if (form) {
       // Guardar la fecha de la confesión
       localStorage.setItem('lastConfessionTime', new Date());
 
-      // Guardar la confesión en localStorage
-      let confessions = JSON.parse(localStorage.getItem('confessions')) || [];
-      confessions.push({ text: confessionText.value, date: new Date() });
-      localStorage.setItem('confessions', JSON.stringify(confessions));
+      // Enviar la confesión al servidor
+      try {
+        const response = await fetch('http://localhost>:3000/confessions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: confessionText.value
+          })
+        });
+        
+        if (response.ok) {
+          console.log("Confesión enviada correctamente");
+        } else {
+          console.error("Error al enviar la confesión");
+        }
+      } catch (error) {
+        console.error("Error en la solicitud:", error);
+      }
 
       // Limpiar el campo de texto
       confessionText.value = '';
@@ -76,29 +92,31 @@ function countdown(time) {
 }
 
 // --- CARGAR RESPUESTAS EN LA SEGUNDA PÁGINA ---
-// Cargar confesiones desde localStorage
+// Cargar confesiones desde el servidor
 const responseContainer = document.getElementById('response-container');
 if (responseContainer) {
-  const confessions = JSON.parse(localStorage.getItem('confessions')) || [];
+  fetch('http://<IP_DEL_SERVIDOR>:3000/confessions')
+    .then(response => response.json())
+    .then(confessions => {
+      confessions.forEach(confession => {
+        const responseDiv = document.createElement('div');
+        responseDiv.classList.add('response');
 
-  // Generar los cuadros de confesiones
-  confessions.forEach(confession => {
-    const responseDiv = document.createElement('div');
-    responseDiv.classList.add('response');
+        // Si la confesión es muy larga, añadir la clase long
+        if (confession.message.length > 100) {
+          responseDiv.classList.add('long');
+          responseDiv.addEventListener('click', () => {
+            responseDiv.classList.toggle('expanded');
+            responseDiv.style.animation = 'expandAnimation 0.5s ease';
+          });
+        }
 
-    // Si la confesión es muy larga, añadir la clase long
-    if (confession.text.length > 100) {
-      responseDiv.classList.add('long');
-      responseDiv.addEventListener('click', () => {
-        responseDiv.classList.toggle('expanded');
-        responseDiv.style.animation = 'expandAnimation 0.5s ease';
+        // Añadir el texto de la confesión
+        responseDiv.textContent = confession.message;
+        responseContainer.appendChild(responseDiv);
       });
-    }
-
-    // Añadir el texto de la confesión
-    responseDiv.textContent = confession.text;
-    responseContainer.appendChild(responseDiv);
-  });
+    })
+    .catch(error => console.error("Error al cargar las confesiones:", error));
 }
 
 // --- BOTÓN VOLVER A CONFESAR ---
